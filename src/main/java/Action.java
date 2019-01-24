@@ -10,12 +10,23 @@ public class Action {
         return account;
     }
 
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Map<String, Object> getData() {
         return data;
     }
 
+    public void setData(Map<String, Object> data) {
+        this.data = data;
+    }
 }

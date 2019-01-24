@@ -1,12 +1,18 @@
+import java.util.ArrayList;
+
 public class Transaction {
 
-    private Action[] actions;
+    private ArrayList<Action> actions;
 
     public Transaction() {
 
     }
 
-    public Action[] getActions() {
+    public void setActions(ArrayList<Action> actions) {
+        this.actions = actions;
+    }
+
+    public ArrayList<Action> getActions() {
         return actions;
     }
 }

@@ -1,7 +1,9 @@
+import java.util.ArrayList;
+
 public class BlockDetail {
 
     private String producer;
-   // private Transactions[] transactions;
+    private ArrayList<Transactions> transactions;
 
     public BlockDetail() {
 
@@ -14,7 +16,12 @@ public class BlockDetail {
     public void setProducer(String producer) {
         this.producer = producer;
     }
-    //    public Transactions[] getTransactions() {
-//        return transactions;
-//    }
+
+    public void setTransactions(ArrayList<Transactions> transactions) {
+        this.transactions = transactions;
+    }
+
+    public ArrayList<Transactions> getTransactions() {
+        return transactions;
+    }
 }

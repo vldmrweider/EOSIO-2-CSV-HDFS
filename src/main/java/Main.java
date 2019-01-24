@@ -23,8 +23,7 @@ public class Main {
         MongoCollection<Block> collection = database.getCollection("blocks", Block.class);
 
         Block myDoc = collection.find(eq("block_num", 7448789)).first();
-        System.out.println(myDoc.getBlock().getProducer());
-
+        System.out.println(myDoc.getBlock().getTransactions().get(0).getTrx().getTransaction().getActions().get(0).getData());
     }
 
 
