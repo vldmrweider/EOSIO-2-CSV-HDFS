@@ -4,6 +4,7 @@ public class BlockDetail {
 
     private String producer;
     private ArrayList<Transactions> transactions;
+    private String timestamp;
 
     public BlockDetail() {
 
@@ -23,5 +24,13 @@ public class BlockDetail {
 
     public ArrayList<Transactions> getTransactions() {
         return transactions;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 }
