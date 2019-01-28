@@ -23,8 +23,6 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.bson.codecs.pojo.Conventions.ANNOTATION_CONVENTION;
 
 
-
-
 public class Main {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
@@ -59,7 +57,6 @@ public class Main {
                             tr.getNet_usage_words() + ";" + blockDetail.getProducer() +
                             ";" + act.getAccount() + ";" + act.getName() + ";" +
                             act.getData().entrySet());
-
                 }
             }
         }
