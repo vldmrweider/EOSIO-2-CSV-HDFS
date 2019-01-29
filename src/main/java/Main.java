@@ -3,24 +3,26 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.apache.commons.cli.*;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import static com.mongodb.client.model.Filters.eq;
-import static java.lang.System.out;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.bson.codecs.pojo.Conventions.ANNOTATION_CONVENTION;
 
-import org.apache.commons.cli.*;
-
 public class Main {
 
     public static void main(String[] args) throws IOException {
+        //7448789
 
         Options options = new Options();
 
@@ -54,12 +56,50 @@ public class Main {
 
         PrintWriter outCsv = new PrintWriter(String.format("%s_%s.csv", startblock, stopblock));
 
-        if (sourcetype == "mongo") {
+        if (sourcetype.equals("mongo")) {
             mongoSource(startblock, stopblock, outCsv);
         } else {
-
+            httpSource(startblock, stopblock, outCsv);
         }
         outCsv.close();
+    }
+
+    private static void httpSource(int blockStart, int blockStop, PrintWriter outCsv) throws IOException {
+
+        String httpsUrl = "https://api-node-1.u.community:7888/v1/chain/get_block";
+        URL myurl = new URL(httpsUrl);
+        HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
+        con.setRequestMethod("POST");
+        String query = "{\"block_num_or_id\":5}";
+
+        con.setRequestProperty("Content-length", String.valueOf(query.length()));
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0;Windows98;DigExt)");
+        con.setDoOutput(true);
+        con.setDoInput(true);
+
+        DataOutputStream output = new DataOutputStream(con.getOutputStream());
+
+        output.writeBytes(query);
+
+        output.close();
+
+        StringBuilder sb = new StringBuilder();
+        int HttpResult = con.getResponseCode();
+        if (HttpResult == HttpURLConnection.HTTP_OK) {
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            br.close();
+        } else {
+            System.out.println(con.getResponseMessage());
+        }
+
+        sb to gson
+
     }
 
     private static void mongoSource(int blockStart, int blockStop, PrintWriter outCsv) {
