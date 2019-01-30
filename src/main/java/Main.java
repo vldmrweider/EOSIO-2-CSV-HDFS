@@ -1,3 +1,4 @@
+import com.google.gson.Gson;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -97,8 +98,12 @@ public class Main {
         } else {
             System.out.println(con.getResponseMessage());
         }
+        System.out.println(sb.toString());
+        Gson gson = new Gson();
+        Block obj = gson.fromJson(sb.toString(), Block.class);
 
-        sb to gson
+        //to do
+
 
     }
 
