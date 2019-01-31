@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -60,18 +61,18 @@ public class Main {
         if (sourcetype.equals("mongo")) {
             mongoSource(startblock, stopblock, outCsv);
         } else {
-            httpSource(startblock, stopblock, outCsv);
+            httpSource(startblock, outCsv);
         }
         outCsv.close();
     }
 
-    private static void httpSource(int blockStart, int blockStop, PrintWriter outCsv) throws IOException {
+    private static void httpSource(int blockStart, PrintWriter outCsv) throws IOException {
 
         String httpsUrl = "https://api-node-1.u.community:7888/v1/chain/get_block";
         URL myurl = new URL(httpsUrl);
-        HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
+        HttpsURLConnection con = (HttpsURLConnection) myurl.openConnection();
         con.setRequestMethod("POST");
-        String query =  String.format("{\"block_num_or_id\":%d}",blockStart);
+        String query = String.format("{\"block_num_or_id\":%d}", blockStart);
 
         con.setRequestProperty("Content-length", String.valueOf(query.length()));
         con.setRequestProperty("Content-Type", "application/json");
@@ -90,7 +91,7 @@ public class Main {
         if (HttpResult == HttpURLConnection.HTTP_OK) {
             BufferedReader br = new BufferedReader(
                     new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
-            String line = null;
+            String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line).append("\n");
             }
@@ -101,8 +102,21 @@ public class Main {
         Gson gson = new Gson();
         BlockHttp obj = gson.fromJson(sb.toString(), BlockHttp.class);
 
+        toCsv(outCsv, obj.getTransactions(), obj.getBlock_num(), obj.getProducer());
 
 
+    }
+
+    private static void toCsv(PrintWriter outCsv, ArrayList<Transactions> transactions, int block_num, String producer) {
+        for (Transactions tr : transactions) {
+            Trx trx = tr.getTrx();
+            for (Action act : trx.getTransaction().getActions()) {
+                outCsv.println(block_num + ";" + trx.getId() + ";" + tr.getCpu_usage_us() + ";" +
+                        tr.getNet_usage_words() + ";" + producer +
+                        ";" + act.getAccount() + ";" + act.getName() + ";" +
+                        act.getData().entrySet());
+            }
+        }
     }
 
     private static void mongoSource(int blockStart, int blockStop, PrintWriter outCsv) {
@@ -118,15 +132,7 @@ public class Main {
             Block block = collection.find(eq("block_num", i)).first();
             if (block == null) continue;
             BlockDetail blockDetail = block.getBlock();
-            for (Transactions tr : blockDetail.getTransactions()) {
-                Trx trx = tr.getTrx();
-                for (Action act : trx.getTransaction().getActions()) {
-                    outCsv.println(block.getBlock_num() + ";" + trx.getId() + ";" + tr.getCpu_usage_us() + ";" +
-                            tr.getNet_usage_words() + ";" + blockDetail.getProducer() +
-                            ";" + act.getAccount() + ";" + act.getName() + ";" +
-                            act.getData().entrySet());
-                }
-            }
+            toCsv(outCsv, blockDetail.getTransactions(), block.getBlock_num(), blockDetail.getProducer());
         }
     }
 
