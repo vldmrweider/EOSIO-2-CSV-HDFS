@@ -71,7 +71,7 @@ public class Main {
         URL myurl = new URL(httpsUrl);
         HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
         con.setRequestMethod("POST");
-        String query = "{\"block_num_or_id\":5}";
+        String query =  String.format("{\"block_num_or_id\":%d}",blockStart);
 
         con.setRequestProperty("Content-length", String.valueOf(query.length()));
         con.setRequestProperty("Content-Type", "application/json");
@@ -98,11 +98,9 @@ public class Main {
         } else {
             System.out.println(con.getResponseMessage());
         }
-        System.out.println(sb.toString());
         Gson gson = new Gson();
-        Block obj = gson.fromJson(sb.toString(), Block.class);
+        BlockHttp obj = gson.fromJson(sb.toString(), BlockHttp.class);
 
-        //to do
 
 
     }
