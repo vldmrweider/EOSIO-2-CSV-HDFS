@@ -4,6 +4,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.sun.rowset.internal.Row;
 import org.apache.commons.cli.*;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -56,10 +57,11 @@ public class Main {
         int stopblock = Integer.parseInt(cmd.getOptionValue("blockstop"));
         String sourcetype = cmd.getOptionValue("source");
 
-        PrintWriter outCsv = new PrintWriter(String.format("%s_%s.csv", startblock, stopblock));
+        PrintWriter outCsv = new PrintWriter(String.format("%s_%s.json", startblock, stopblock));
 
         if (sourcetype.equals("mongo")) {
-            mongoSource(startblock, stopblock, outCsv);
+            httpRateSource(startblock, outCsv);
+            //mongoSource(startblock, stopblock, outCsv);
         } else {
             httpSource(startblock, outCsv);
         }
@@ -107,14 +109,62 @@ public class Main {
 
     }
 
+    private static void httpRateSource(int blockStart, PrintWriter outCsv) throws IOException {
+
+
+        String httpsUrl = "https://api-node-1.u.community:7888/v1/chain/get_table_rows";
+        URL myurl = new URL(httpsUrl);
+        HttpsURLConnection con = (HttpsURLConnection) myurl.openConnection();
+        con.setRequestMethod("POST");
+        String query = "{\"scope\":\"uos.calcs\",\"code\":\"uos.calcs\",\"table\":\"rate\",\"json\":\"true\",\"limit\":\"10\",\"lower_bound\":\"0\"}";
+
+        con.setRequestProperty("Content-length", String.valueOf(query.length()));
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0;Windows98;DigExt)");
+        con.setDoOutput(true);
+        con.setDoInput(true);
+
+        DataOutputStream output = new DataOutputStream(con.getOutputStream());
+
+        output.writeBytes(query);
+
+        output.close();
+
+        StringBuilder sb = new StringBuilder();
+        int HttpResult = con.getResponseCode();
+        if (HttpResult == HttpURLConnection.HTTP_OK) {
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            br.close();
+        } else {
+            System.out.println(con.getResponseMessage());
+        }
+
+        Gson gson = new Gson();
+        Rows obj = gson.fromJson(sb.toString(), Rows.class);
+
+        for (Rate rt : obj.getRows())
+        {
+            outCsv.println("{\"acc_name\":\""+rt.getAcc_name()+"\",\"rate\":\""+rt.getValue()+"\"}");
+        }
+
+
+    }
+
+
+
     private static void toCsv(PrintWriter outCsv, ArrayList<Transactions> transactions, int block_num, String producer) {
         for (Transactions tr : transactions) {
             Trx trx = tr.getTrx();
             for (Action act : trx.getTransaction().getActions()) {
                 outCsv.println(block_num + ";" + trx.getId() + ";" + tr.getCpu_usage_us() + ";" +
                         tr.getNet_usage_words() + ";" + producer +
-                        ";" + act.getAccount() + ";" + act.getName() + ";" +
-                        act.getData().entrySet());
+                        ";" + act.getAccount() + ";" + act.getName());
+                        //+ ";" +act.getData().entrySet());
             }
         }
     }
