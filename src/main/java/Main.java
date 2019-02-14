@@ -57,7 +57,7 @@ public class Main {
         int stopblock = Integer.parseInt(cmd.getOptionValue("blockstop"));
         String sourcetype = cmd.getOptionValue("source");
 
-        PrintWriter outCsv = new PrintWriter(String.format("%s_%s.json", startblock, stopblock));
+        PrintWriter outCsv = new PrintWriter(String.format("14022019.json", startblock, stopblock));
 
         if (sourcetype.equals("mongo")) {
             httpRateSource(startblock, outCsv);
@@ -116,7 +116,7 @@ public class Main {
         URL myurl = new URL(httpsUrl);
         HttpsURLConnection con = (HttpsURLConnection) myurl.openConnection();
         con.setRequestMethod("POST");
-        String query = "{\"scope\":\"uos.calcs\",\"code\":\"uos.calcs\",\"table\":\"rate\",\"json\":\"true\",\"limit\":\"10\",\"lower_bound\":\"0\"}";
+        String query = "{\"scope\":\"uos.calcs\",\"code\":\"uos.calcs\",\"table\":\"rate\",\"json\":\"true\",\"limit\":\"10000\",\"lower_bound\":\"0\"}";
 
         con.setRequestProperty("Content-length", String.valueOf(query.length()));
         con.setRequestProperty("Content-Type", "application/json");
@@ -149,7 +149,7 @@ public class Main {
 
         for (Rate rt : obj.getRows())
         {
-            outCsv.println("{\"acc_name\":\""+rt.getAcc_name()+"\",\"rate\":\""+rt.getValue()+"\"}");
+            outCsv.println("{\"acc_name\":\""+rt.getAcc_name()+"\",\"rate\":"+rt.getValue()+"}");
         }
 
 
