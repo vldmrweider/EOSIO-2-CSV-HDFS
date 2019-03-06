@@ -8,7 +8,28 @@ public class Main2 {
 
         Gson gson = new Gson();
 
-        File f = new File("/media/vldmr/AAD247FFD247CE6F/gh/201901/2019-01-01-0.json");
+        PrintWriter outCsv = new PrintWriter("/media/vldmr/AAD247FFD247CE6F/gh/gh.csv");
+        final File folder = new File("/media/vldmr/AAD247FFD247CE6F/gh/201812");
+        File[] listOfFiles = folder.listFiles();
+
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+
+                System.out.println(file.getName());
+                parsefile(gson, outCsv, file.getAbsolutePath());
+            }
+        }
+
+        outCsv.close();
+
+    }
+
+
+
+    private static void parsefile(Gson gson, PrintWriter outCsv, String fname) throws IOException {
+
+        File f = new File(fname);
+      //  /media/vldmr/AAD247FFD247CE6F/gh/201901/2019-01-01-0.json
 
         BufferedReader b = new BufferedReader(new FileReader(f));
 
@@ -17,15 +38,10 @@ public class Main2 {
         while ((readLine = b.readLine()) != null) {
 
             GhBlock obj = gson.fromJson(readLine, GhBlock.class);
-            System.out.println(obj.getActor().getLogin());
+            outCsv.println(String.format("%s;%s;%s;%s",obj.getActor().getId(),obj.getActor().getLogin(),obj.getRepo().getId(),obj.getType()));
+            //System.out.println(String.format("%s;%s;%s;%s",obj.getActor().getId(),obj.getActor().getLogin(),obj.getRepo().getId(),obj.getType()));
 
         }
-
-
-        //    PrintWriter outCsv = new PrintWriter("gh.csv");
-
-
-
 
     }
 
