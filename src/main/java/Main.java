@@ -164,7 +164,7 @@ public class Main {
                 outCsv.println(block_num + ";" + trx.getId() + ";" + tr.getCpu_usage_us() + ";" +
                         tr.getNet_usage_words() + ";" + producer +
                         ";" + act.getAccount() + ";" + act.getName());
-                        //+ ";" +act.getData().entrySet());
+
             }
         }
     }
