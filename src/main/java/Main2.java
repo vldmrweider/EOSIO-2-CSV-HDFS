@@ -9,7 +9,7 @@ public class Main2 {
         Gson gson = new Gson();
 
         PrintWriter outCsv = new PrintWriter("/media/vldmr/AAD247FFD247CE6F/gh/gh.csv");
-        final File folder = new File("/media/vldmr/AAD247FFD247CE6F/gh/201803");
+        final File folder = new File("/media/vldmr/AAD247FFD247CE6F/gh");
         File[] listOfFiles = folder.listFiles();
 
         for (File file : listOfFiles) {
@@ -17,6 +17,8 @@ public class Main2 {
 
                 System.out.println(file.getName());
                 parsefile(gson, outCsv, file.getAbsolutePath());
+
+                file.delete();
             }
         }
 
