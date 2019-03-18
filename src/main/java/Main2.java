@@ -9,7 +9,7 @@ public class Main2 {
         Gson gson = new Gson();
 
         PrintWriter outCsv = new PrintWriter("/media/vldmr/AAD247FFD247CE6F/gh/gh.csv");
-        final File folder = new File("/media/vldmr/AAD247FFD247CE6F/gh");
+        final File folder = new File("/media/vldmr/AAD247FFD247CE6F/gh/20172");
         File[] listOfFiles = folder.listFiles();
 
         for (File file : listOfFiles) {
