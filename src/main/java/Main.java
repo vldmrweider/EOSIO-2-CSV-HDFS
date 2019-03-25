@@ -104,7 +104,7 @@ public class Main {
         Gson gson = new Gson();
         BlockHttp obj = gson.fromJson(sb.toString(), BlockHttp.class);
 
-        toCsv(outCsv, obj.getTransactions(), obj.getBlock_num(), obj.getProducer());
+        //toCsv(outCsv, obj.getTransactions(), obj.getBlock_num(), obj.getProducer());
 
 
     }
