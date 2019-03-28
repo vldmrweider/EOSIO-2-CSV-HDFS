@@ -70,6 +70,7 @@ public class Main {
 
     private static void httpSource(int blockStart, PrintWriter outCsv) throws IOException {
 
+        //getblock
         String httpsUrl = "https://api-node-1.u.community:7888/v1/chain/get_block";
         URL myurl = new URL(httpsUrl);
         HttpsURLConnection con = (HttpsURLConnection) myurl.openConnection();
