@@ -79,7 +79,7 @@ public class Main {
 
         con.setRequestProperty("Content-length", String.valueOf(query.length()));
         con.setRequestProperty("Content-Type", "application/json");
-        con.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0;Windows98;DigExt)");
+     //   con.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0;Windows98;DigExt)");
         con.setDoOutput(true);
         con.setDoInput(true);
 
